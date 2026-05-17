@@ -1,0 +1,3 @@
+class AnalyticsRepository {
+  const AnalyticsRepository();
+}

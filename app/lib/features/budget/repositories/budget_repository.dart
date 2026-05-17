@@ -1,0 +1,3 @@
+class BudgetRepository {
+  const BudgetRepository();
+}
