@@ -12,6 +12,7 @@ class AppInput extends StatelessWidget {
     this.keyboardType,
     this.obscureText = false,
     this.autocorrect = true,
+    this.prefixIcon,
     this.suffixIcon,
     this.onChanged,
   });
@@ -22,6 +23,7 @@ class AppInput extends StatelessWidget {
   final TextInputType? keyboardType;
   final bool obscureText;
   final bool autocorrect;
+  final Widget? prefixIcon;
   final Widget? suffixIcon;
   final ValueChanged<String>? onChanged;
 
@@ -39,6 +41,7 @@ class AppInput extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: const TextStyle(color: AppColors.textTertiary),
+        prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
         filled: true,
         fillColor: AppColors.bgElevated,

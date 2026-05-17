@@ -87,17 +87,37 @@ class HomeScreen extends ConsumerWidget {
                       'No expenses yet',
                       style: AppTextStyles.caption,
                     ),
-                  ...recentExpenses.map(
-                    (e) => Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: TransactionTile(
-                        amount: e.amount,
-                        category: e.category,
-                        note: e.note,
-                        date: e.date,
+                  if (recentExpenses.isNotEmpty)
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.bgSurface,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppColors.border),
+                      ),
+                      child: Column(
+                        children: recentExpenses.asMap().entries.map((entry) {
+                          final i = entry.key;
+                          final e = entry.value;
+                          return Column(
+                            children: [
+                              TransactionTile(
+                                amount: e.amount,
+                                category: e.category,
+                                note: e.note,
+                                date: e.date,
+                              ),
+                              if (i < recentExpenses.length - 1)
+                                const Divider(
+                                  height: 1,
+                                  thickness: 1,
+                                  color: AppColors.border,
+                                  indent: 72,
+                                ),
+                            ],
+                          );
+                        }).toList(),
                       ),
                     ),
-                  ),
                   const SizedBox(height: 80),
                 ]),
               ),

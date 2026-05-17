@@ -15,7 +15,9 @@ import '../providers/expenses_provider.dart';
 import 'category_selector_sheet.dart';
 
 class AddExpenseSheet extends ConsumerStatefulWidget {
-  const AddExpenseSheet({super.key});
+  const AddExpenseSheet({super.key, this.initialExpense});
+
+  final Expense? initialExpense;
 
   @override
   ConsumerState<AddExpenseSheet> createState() => _AddExpenseSheetState();
@@ -46,10 +48,21 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
   @override
   void initState() {
     super.initState();
+    final e = widget.initialExpense;
+    if (e != null) {
+      _amountController.text =
+          e.amount % 1 == 0 ? e.amount.toInt().toString() : e.amount.toString();
+      _noteController.text = e.note ?? '';
+      _category = e.category;
+      _date = e.date;
+      _paymentMethod = e.paymentMethod;
+    }
     _amountController.addListener(_onAmountChanged);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _amountFocus.requestFocus();
-    });
+    if (e == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _amountFocus.requestFocus();
+      });
+    }
   }
 
   @override
@@ -137,20 +150,31 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
     final amount = double.tryParse(_amountController.text.trim()) ?? 0;
     if (amount <= 0) return;
     setState(() => _isSaving = true);
+    final trimmedNote =
+        _noteController.text.trim().isEmpty ? null : _noteController.text.trim();
     try {
-      final expense = Expense(
-        id: '',
-        userId: supabase.auth.currentUser!.id,
-        amount: amount,
-        category: _category,
-        note: _noteController.text.trim().isEmpty
-            ? null
-            : _noteController.text.trim(),
-        date: _date,
-        paymentMethod: _paymentMethod,
-        createdAt: DateTime.now(),
-      );
-      await ref.read(expensesNotifierProvider.notifier).addExpense(expense);
+      if (widget.initialExpense != null) {
+        final updated = widget.initialExpense!.copyWith(
+          amount: amount,
+          category: _category,
+          note: trimmedNote,
+          date: _date,
+          paymentMethod: _paymentMethod,
+        );
+        await ref.read(expensesNotifierProvider.notifier).updateExpense(updated);
+      } else {
+        final expense = Expense(
+          id: '',
+          userId: supabase.auth.currentUser!.id,
+          amount: amount,
+          category: _category,
+          note: trimmedNote,
+          date: _date,
+          paymentMethod: _paymentMethod,
+          createdAt: DateTime.now(),
+        );
+        await ref.read(expensesNotifierProvider.notifier).addExpense(expense);
+      }
       if (mounted) Navigator.pop(context);
       HapticFeedback.mediumImpact();
     } catch (_) {
@@ -369,9 +393,11 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Text('Add Expense',
-                    style: AppTextStyles.heading2,
-                    textAlign: TextAlign.center),
+                Text(
+                  widget.initialExpense != null ? 'Edit Expense' : 'Add Expense',
+                  style: AppTextStyles.heading2,
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: 24),
                 _buildAmountField(),
                 const SizedBox(height: 24),
@@ -396,7 +422,9 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
                         ),
                       ),
                       child: Text(
-                        'Save Expense',
+                        widget.initialExpense != null
+                            ? 'Update Expense'
+                            : 'Save Expense',
                         style: AppTextStyles.label.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,

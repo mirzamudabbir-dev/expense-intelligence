@@ -1,7 +1,7 @@
 # Build Progress
 
-Latest commit: 1f49b3e
-Current step: 8
+Latest commit: TBD
+Current step: 9
 Blockers: none
 
 ## Steps
@@ -12,7 +12,7 @@ Blockers: none
 - [x] 5. Expense model + repository
 - [x] 6. Add Expense sheet
 - [x] 7. Home screen
-- [ ] 8. Transaction history
+- [x] 8. Transaction history
 - [ ] 9. FastAPI backend
 - [ ] 10. Analytics screen
 - [ ] 11. Budget screen

@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../core/utils/currency_formatter.dart';
 import '../../core/utils/date_formatter.dart';
-import 'amount_display.dart';
-import 'category_chip.dart';
 
 class TransactionTile extends StatelessWidget {
   const TransactionTile({
@@ -13,14 +12,20 @@ class TransactionTile extends StatelessWidget {
     required this.category,
     this.note,
     required this.date,
+    this.createdAt,
+    this.paymentMethod,
     this.onTap,
+    this.onLongPress,
   });
 
   final double amount;
   final String category;
   final String? note;
   final DateTime date;
+  final DateTime? createdAt;
+  final String? paymentMethod;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
 
   static const _categoryIcons = <String, IconData>{
     'food': Icons.restaurant,
@@ -36,17 +41,21 @@ class TransactionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = AppColors.categoryColors[category] ?? AppColors.textSecondary;
+    final color =
+        AppColors.categoryColors[category] ?? AppColors.textSecondary;
     final icon = _categoryIcons[category] ?? Icons.grid_view;
+    final title = (note != null && note!.isNotEmpty)
+        ? note!
+        : category[0].toUpperCase() + category.substring(1);
 
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppColors.bgSurface,
-          borderRadius: BorderRadius.circular(AppConstants.radiusMd),
-          border: Border.all(color: AppColors.border),
+      onLongPress: onLongPress,
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppConstants.pageMargin,
+          vertical: 12,
         ),
         child: Row(
           children: [
@@ -54,8 +63,8 @@ class TransactionTile extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: color.withAlpha(38),
-                borderRadius: BorderRadius.circular(AppConstants.radiusSm),
+                color: color.withAlpha(51),
+                shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color, size: 20),
             ),
@@ -63,28 +72,31 @@ class TransactionTile extends StatelessWidget {
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  CategoryChip(category: category),
-                  if (note != null && note!.isNotEmpty) ...[
-                    const SizedBox(height: 4),
+                  Text(
+                    title,
+                    style: AppTextStyles.body,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (paymentMethod != null) ...[
+                    const SizedBox(height: 2),
                     Text(
-                      note!,
+                      '${DateFormatter.time(createdAt ?? date)} · $paymentMethod',
                       style: AppTextStyles.caption,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ],
               ),
             ),
             const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                AmountDisplay(amount: amount),
-                const SizedBox(height: 4),
-                Text(DateFormatter.short(date), style: AppTextStyles.caption),
-              ],
+            Text(
+              CurrencyFormatter.format(amount),
+              style: AppTextStyles.body.copyWith(
+                fontFamily: AppTextStyles.mono.fontFamily,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ],
         ),
