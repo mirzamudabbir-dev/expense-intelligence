@@ -1,12 +1,12 @@
 # Build Progress
 
 Latest commit: (pending)
-Current step: 2
+Current step: 3
 Blockers: none
 
 ## Steps
 - [x] 1. Scaffolding
-- [ ] 2. Supabase schema + RLS
+- [x] 2. Supabase schema + RLS
 - [ ] 3. Theme + shared components
 - [ ] 4. Auth screens
 - [ ] 5. Expense model + repository
