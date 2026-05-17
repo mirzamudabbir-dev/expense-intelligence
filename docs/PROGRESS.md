@@ -1,7 +1,7 @@
 # Build Progress
 
-Latest commit: 3cecb6f
-Current step: 7
+Latest commit: 1f49b3e
+Current step: 8
 Blockers: none
 
 ## Steps
@@ -11,7 +11,7 @@ Blockers: none
 - [x] 4. Auth screens
 - [x] 5. Expense model + repository
 - [x] 6. Add Expense sheet
-- [ ] 7. Home screen
+- [x] 7. Home screen
 - [ ] 8. Transaction history
 - [ ] 9. FastAPI backend
 - [ ] 10. Analytics screen
