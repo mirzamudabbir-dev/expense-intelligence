@@ -1,0 +1,14 @@
+.dart_tool/
+build/
+*.g.dart
+*.freezed.dart
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+pubspec.lock
+__pycache__/
+*.pyc
+.venv/
+.env
+.env.local
+*.log
