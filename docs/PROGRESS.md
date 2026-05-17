@@ -13,7 +13,7 @@ Blockers: none
 - [x] 6. Add Expense sheet
 - [x] 7. Home screen
 - [x] 8. Transaction history
-- [ ] 9. FastAPI backend
+- [x] 9. FastAPI backend
 - [ ] 10. Analytics screen
 - [ ] 11. Budget screen
 - [ ] 12. Settings screen
