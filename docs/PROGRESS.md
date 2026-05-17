@@ -1,7 +1,7 @@
 # Build Progress
 
-Latest commit: 6a7654f
-Current step: 10
+Latest commit: TBD
+Current step: 11
 Blockers: none
 
 ## Steps
@@ -14,7 +14,7 @@ Blockers: none
 - [x] 7. Home screen
 - [x] 8. Transaction history
 - [x] 9. FastAPI backend
-- [ ] 10. Analytics screen
+- [x] 10. Analytics screen
 - [ ] 11. Budget screen
 - [ ] 12. Settings screen
 - [ ] 13. Polish pass
