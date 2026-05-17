@@ -1,13 +1,13 @@
 # Build Progress
 
-Latest commit: f76d867
-Current step: 3
+Latest commit: TBD
+Current step: 4
 Blockers: none
 
 ## Steps
 - [x] 1. Scaffolding
 - [x] 2. Supabase schema + RLS
-- [ ] 3. Theme + shared components
+- [x] 3. Theme + shared components
 - [ ] 4. Auth screens
 - [ ] 5. Expense model + repository
 - [ ] 6. Add Expense sheet

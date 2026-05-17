@@ -15,13 +15,18 @@ class BudgetProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(AppConstants.radiusFull),
-      child: LinearProgressIndicator(
-        value: percentage.clamp(0.0, 1.0),
-        backgroundColor: AppColors.bgElevated,
-        valueColor: AlwaysStoppedAnimation(_fillColor),
-        minHeight: 6,
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: percentage.clamp(0.0, 1.0)),
+      duration: const Duration(milliseconds: 600),
+      curve: Curves.easeOutQuart,
+      builder: (context, value, _) => ClipRRect(
+        borderRadius: BorderRadius.circular(AppConstants.radiusFull),
+        child: LinearProgressIndicator(
+          value: value,
+          backgroundColor: AppColors.bgElevated,
+          valueColor: AlwaysStoppedAnimation(_fillColor),
+          minHeight: 6,
+        ),
       ),
     );
   }

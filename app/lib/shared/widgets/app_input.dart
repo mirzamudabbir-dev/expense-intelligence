@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_text_styles.dart';
 import '../../core/constants/app_constants.dart';
 
 class AppInput extends StatelessWidget {
@@ -25,7 +26,7 @@ class AppInput extends StatelessWidget {
       focusNode: focusNode,
       keyboardType: keyboardType,
       onChanged: onChanged,
-      style: const TextStyle(color: AppColors.textPrimary),
+      style: AppTextStyles.body,
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: const TextStyle(color: AppColors.textTertiary),
