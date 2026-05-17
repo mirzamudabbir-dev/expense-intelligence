@@ -1,7 +1,7 @@
 # Build Progress
 
-Latest commit: 6842d5a
-Current step: 5
+Latest commit: pending
+Current step: 6
 Blockers: none
 
 ## Steps
@@ -9,7 +9,7 @@ Blockers: none
 - [x] 2. Supabase schema + RLS
 - [x] 3. Theme + shared components
 - [x] 4. Auth screens
-- [ ] 5. Expense model + repository
+- [x] 5. Expense model + repository
 - [ ] 6. Add Expense sheet
 - [ ] 7. Home screen
 - [ ] 8. Transaction history
