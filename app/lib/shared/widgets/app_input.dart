@@ -10,6 +10,9 @@ class AppInput extends StatelessWidget {
     this.focusNode,
     this.hint,
     this.keyboardType,
+    this.obscureText = false,
+    this.autocorrect = true,
+    this.suffixIcon,
     this.onChanged,
   });
 
@@ -17,6 +20,9 @@ class AppInput extends StatelessWidget {
   final FocusNode? focusNode;
   final String? hint;
   final TextInputType? keyboardType;
+  final bool obscureText;
+  final bool autocorrect;
+  final Widget? suffixIcon;
   final ValueChanged<String>? onChanged;
 
   @override
@@ -25,11 +31,15 @@ class AppInput extends StatelessWidget {
       controller: controller,
       focusNode: focusNode,
       keyboardType: keyboardType,
+      obscureText: obscureText,
+      autocorrect: autocorrect,
+      enableSuggestions: !obscureText,
       onChanged: onChanged,
       style: AppTextStyles.body,
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: const TextStyle(color: AppColors.textTertiary),
+        suffixIcon: suffixIcon,
         filled: true,
         fillColor: AppColors.bgElevated,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

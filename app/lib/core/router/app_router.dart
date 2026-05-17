@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/onboarding_screen.dart';
@@ -10,8 +12,12 @@ import '../../features/settings/screens/settings_screen.dart';
 import '../../services/supabase_service.dart';
 import 'main_shell.dart';
 
+final _routerRefreshStream =
+    _GoRouterRefreshStream(supabase.auth.onAuthStateChange);
+
 final router = GoRouter(
   initialLocation: '/splash',
+  refreshListenable: _routerRefreshStream,
   redirect: (context, state) {
     final isLoggedIn = supabase.auth.currentUser != null;
     final loc = state.matchedLocation;
@@ -44,3 +50,18 @@ final router = GoRouter(
     GoRoute(path: '/budget', builder: (_, __) => const BudgetScreen()),
   ],
 );
+
+class _GoRouterRefreshStream extends ChangeNotifier {
+  _GoRouterRefreshStream(Stream<dynamic> stream) {
+    notifyListeners();
+    _sub = stream.listen((_) => notifyListeners());
+  }
+
+  late final StreamSubscription<dynamic> _sub;
+
+  @override
+  void dispose() {
+    _sub.cancel();
+    super.dispose();
+  }
+}
