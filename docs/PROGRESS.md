@@ -1,7 +1,7 @@
 # Build Progress
 
-Latest commit: dc62699
-Current step: 12
+Latest commit: 700b145
+Current step: 13
 Blockers: none
 
 ## Steps
@@ -16,6 +16,6 @@ Blockers: none
 - [x] 9. FastAPI backend
 - [x] 10. Analytics screen
 - [x] 11. Budget screen
-- [ ] 12. Settings screen
+- [x] 12. Settings screen
 - [ ] 13. Polish pass
 - [ ] 14. E2E smoke test
