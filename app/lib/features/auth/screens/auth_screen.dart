@@ -24,6 +24,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   bool _submitted = false;
   bool _showPass = false;
   bool _showConfirm = false;
+  bool _confirmationSent = false;
 
   String? _emailError;
   String? _passError;
@@ -77,11 +78,17 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             .read(authNotifierProvider.notifier)
             .signIn(_emailCtrl.text.trim(), _passCtrl.text);
       } else {
-        await ref
+        final sessionCreated = await ref
             .read(authNotifierProvider.notifier)
             .signUp(_emailCtrl.text.trim(), _passCtrl.text);
+        // signUp returns false when Supabase requires email confirmation.
+        // Show "check your inbox" instead of silently doing nothing.
+        if (mounted && !sessionCreated) {
+          setState(() => _confirmationSent = true);
+          return;
+        }
+        // Session was created — GoRouter redirect fires automatically.
       }
-      // GoRouter refresh stream triggers redirect → /home on success
     } on AuthException catch (e) {
       setState(() => _generalError = e.message);
     } catch (_) {
@@ -107,7 +114,17 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     return Scaffold(
       backgroundColor: AppColors.bgPrimary,
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: _confirmationSent
+            ? _ConfirmationSentView(
+                email: _emailCtrl.text.trim(),
+                onSignIn: () => setState(() {
+                  _confirmationSent = false;
+                  _isSignIn = true;
+                  _submitted = false;
+                  _generalError = null;
+                }),
+              )
+            : SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: AppConstants.pageMargin),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -279,6 +296,59 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _ConfirmationSentView extends StatelessWidget {
+  const _ConfirmationSentView({required this.email, required this.onSignIn});
+
+  final String email;
+  final VoidCallback onSignIn;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppConstants.pageMargin),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.mark_email_read_outlined,
+              color: AppColors.accent, size: 64),
+          const SizedBox(height: 24),
+          Text('Check your inbox',
+              style: AppTextStyles.heading1, textAlign: TextAlign.center),
+          const SizedBox(height: 12),
+          Text(
+            'We sent a confirmation link to\n$email\n\nOpen it to activate your account, then come back to sign in.',
+            style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 32),
+          SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: ElevatedButton(
+              onPressed: onSignIn,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.accent,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppConstants.radiusXl),
+                ),
+              ),
+              child: Text(
+                'Back to Sign In',
+                style: AppTextStyles.label.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -150,49 +150,58 @@ In Flutter, use `.stream()` not `.select()` for realtime updates on the home scr
 
 ---
 
-## Useful Queries (for FastAPI to use)
+## RPC Functions (run once in Supabase SQL Editor)
 
-### Monthly total
-```sql
-SELECT COALESCE(SUM(amount), 0) as total
-FROM expenses
-WHERE user_id = $1
-  AND date_part('month', date) = $2
-  AND date_part('year', date) = $3;
-```
+These must exist before the FastAPI analytics endpoints will work.
+The backend calls them via `supabase.rpc("function_name", {...})`.
 
-### Category breakdown for month
 ```sql
-SELECT category_id, SUM(amount) as total
-FROM expenses
-WHERE user_id = $1
-  AND date_part('month', date) = $2
-  AND date_part('year', date) = $3
-GROUP BY category_id
-ORDER BY total DESC;
-```
+-- 1. Monthly total spend for a user
+CREATE OR REPLACE FUNCTION get_monthly_total(p_user_id UUID, p_month INT, p_year INT)
+RETURNS NUMERIC AS $$
+  SELECT COALESCE(SUM(amount), 0)
+  FROM expenses
+  WHERE user_id = p_user_id
+    AND EXTRACT(MONTH FROM date) = p_month
+    AND EXTRACT(YEAR FROM date) = p_year;
+$$ LANGUAGE sql SECURITY DEFINER;
 
-### Daily spending (last 7 days)
-```sql
-SELECT date, SUM(amount) as total
-FROM expenses
-WHERE user_id = $1
-  AND date >= CURRENT_DATE - INTERVAL '6 days'
-GROUP BY date
-ORDER BY date ASC;
-```
+-- 2. Per-category breakdown for a month
+CREATE OR REPLACE FUNCTION get_category_breakdown(p_user_id UUID, p_month INT, p_year INT)
+RETURNS TABLE(category_id TEXT, total NUMERIC) AS $$
+  SELECT category_id, SUM(amount) AS total
+  FROM expenses
+  WHERE user_id = p_user_id
+    AND EXTRACT(MONTH FROM date) = p_month
+    AND EXTRACT(YEAR FROM date) = p_year
+  GROUP BY category_id
+  ORDER BY total DESC;
+$$ LANGUAGE sql SECURITY DEFINER;
 
-### Monthly comparison (last 6 months)
-```sql
-SELECT 
-  date_part('month', date) as month,
-  date_part('year', date) as year,
-  SUM(amount) as total
-FROM expenses
-WHERE user_id = $1
-  AND date >= (DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '5 months')
-GROUP BY month, year
-ORDER BY year ASC, month ASC;
+-- 3. Daily totals for the last 7 days
+CREATE OR REPLACE FUNCTION get_daily_trend(p_user_id UUID)
+RETURNS TABLE(day DATE, total NUMERIC) AS $$
+  SELECT date AS day, SUM(amount) AS total
+  FROM expenses
+  WHERE user_id = p_user_id
+    AND date >= CURRENT_DATE - INTERVAL '6 days'
+  GROUP BY date
+  ORDER BY date ASC;
+$$ LANGUAGE sql SECURITY DEFINER;
+
+-- 4. Monthly totals for the last 6 months
+CREATE OR REPLACE FUNCTION get_monthly_comparison(p_user_id UUID)
+RETURNS TABLE(month INT, year INT, total NUMERIC) AS $$
+  SELECT
+    EXTRACT(MONTH FROM date)::INT AS month,
+    EXTRACT(YEAR  FROM date)::INT AS year,
+    SUM(amount) AS total
+  FROM expenses
+  WHERE user_id = p_user_id
+    AND date >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '5 months'
+  GROUP BY month, year
+  ORDER BY year, month;
+$$ LANGUAGE sql SECURITY DEFINER;
 ```
 
 ---

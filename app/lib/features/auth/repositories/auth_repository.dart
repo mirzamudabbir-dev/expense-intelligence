@@ -8,8 +8,9 @@ class AuthRepository {
     await supabase.auth.signInWithPassword(email: email, password: password);
   }
 
-  Future<void> signUp(String email, String password) async {
-    await supabase.auth.signUp(email: email, password: password);
+  Future<bool> signUp(String email, String password) async {
+    final response = await supabase.auth.signUp(email: email, password: password);
+    return response.session != null;
   }
 
   Future<void> signOut() async {

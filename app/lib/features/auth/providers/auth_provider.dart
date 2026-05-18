@@ -20,8 +20,8 @@ class AuthNotifier extends Notifier<User?> {
     await ref.read(authRepositoryProvider).signIn(email, password);
   }
 
-  Future<void> signUp(String email, String password) async {
-    await ref.read(authRepositoryProvider).signUp(email, password);
+  Future<bool> signUp(String email, String password) async {
+    return ref.read(authRepositoryProvider).signUp(email, password);
   }
 
   Future<void> signOut() async {
