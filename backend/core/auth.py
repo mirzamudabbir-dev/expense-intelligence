@@ -1,4 +1,5 @@
 from urllib.parse import urlparse
+from typing import Optional
 
 import httpx
 from fastapi import Depends, HTTPException, status
@@ -9,13 +10,22 @@ from core.config import settings
 
 bearer = HTTPBearer()
 
-# Strip any path (e.g. /rest/v1/) so the JWKS URL is always correct.
-_base = f"{urlparse(settings.SUPABASE_URL).scheme}://{urlparse(settings.SUPABASE_URL).netloc}"
-_JWKS: list = httpx.get(f"{_base}/auth/v1/.well-known/jwks.json", timeout=10).json()["keys"]
+_jwks_cache: Optional[list] = None
+
+
+def _get_jwks() -> list:
+    global _jwks_cache
+    if _jwks_cache is None:
+        parsed = urlparse(settings.SUPABASE_URL)
+        base = f"{parsed.scheme}://{parsed.netloc}"
+        _jwks_cache = httpx.get(
+            f"{base}/auth/v1/.well-known/jwks.json", timeout=10
+        ).json()["keys"]
+    return _jwks_cache
 
 
 def _get_key(kid: str):
-    for k in _JWKS:
+    for k in _get_jwks():
         if k.get("kid") == kid:
             return jose_jwk.construct(k)
     raise ValueError(f"No JWKS key with kid={kid!r}")
