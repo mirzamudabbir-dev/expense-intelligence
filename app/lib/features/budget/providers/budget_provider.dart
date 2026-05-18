@@ -13,6 +13,12 @@ class BudgetNotifier extends AsyncNotifier<Budget?> {
       () => ref.read(budgetRepositoryProvider).fetchCurrentMonthBudget(),
     );
   }
+
+  Future<void> upsertBudget(double monthlyLimit) async {
+    final budget =
+        await ref.read(budgetRepositoryProvider).upsertBudget(monthlyLimit);
+    state = AsyncData(budget);
+  }
 }
 
 final budgetNotifierProvider =
