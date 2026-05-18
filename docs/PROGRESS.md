@@ -1,7 +1,7 @@
 # Build Progress
 
-Latest commit: 700b145
-Current step: 13
+Latest commit: TBD
+Current step: 14
 Blockers: none
 
 ## Steps
@@ -17,5 +17,5 @@ Blockers: none
 - [x] 10. Analytics screen
 - [x] 11. Budget screen
 - [x] 12. Settings screen
-- [ ] 13. Polish pass
+- [x] 13. Polish pass
 - [ ] 14. E2E smoke test

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -335,7 +336,9 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.only(bottom: 32),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).padding.bottom + 32,
+      ),
       itemCount: items.length,
       itemBuilder: (context, index) {
         final item = items[index];
@@ -379,7 +382,17 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
             paymentMethod: expense.paymentMethod,
             onLongPress: () => _showOptionsSheet(expense),
           ),
-        );
+        )
+            .animate()
+            .fadeIn(
+              duration: 250.ms,
+              delay: Duration(milliseconds: (index * 30).clamp(0, 300)),
+            )
+            .slideY(
+              begin: 0.05,
+              duration: 250.ms,
+              delay: Duration(milliseconds: (index * 30).clamp(0, 300)),
+            );
       },
     );
   }

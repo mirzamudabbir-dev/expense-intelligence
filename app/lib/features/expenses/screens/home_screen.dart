@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -105,7 +106,17 @@ class HomeScreen extends ConsumerWidget {
                                 category: e.category,
                                 note: e.note,
                                 date: e.date,
-                              ),
+                              )
+                                  .animate()
+                                  .fadeIn(
+                                    duration: 250.ms,
+                                    delay: (i * 30).ms,
+                                  )
+                                  .slideY(
+                                    begin: 0.05,
+                                    duration: 250.ms,
+                                    delay: (i * 30).ms,
+                                  ),
                               if (i < recentExpenses.length - 1)
                                 const Divider(
                                   height: 1,
@@ -452,6 +463,8 @@ class _WeeklyBarChart extends StatelessWidget {
           );
         }).toList(),
       ),
+      swapAnimationDuration: const Duration(milliseconds: 600),
+      swapAnimationCurve: Curves.easeOutQuart,
     );
   }
 }

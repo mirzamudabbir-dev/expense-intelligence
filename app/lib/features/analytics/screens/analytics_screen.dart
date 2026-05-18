@@ -18,6 +18,7 @@ class AnalyticsScreen extends ConsumerWidget {
 
     return Scaffold(
       body: SafeArea(
+        bottom: false,
         child: analyticsAsync.when(
           loading: () => const Center(
             child: CircularProgressIndicator(color: AppColors.accent),
@@ -64,9 +65,21 @@ class _AnalyticsBody extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 64),
               child: Center(
-                child: Text(
-                  'No expenses this period.',
-                  style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.bar_chart_outlined,
+                      size: 48,
+                      color: AppColors.textTertiary,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'No expenses this period.',
+                      style: AppTextStyles.body
+                          .copyWith(color: AppColors.textSecondary),
+                    ),
+                  ],
                 ),
               ),
             )
@@ -79,7 +92,7 @@ class _AnalyticsBody extends ConsumerWidget {
             const SizedBox(height: 24),
             _DailyTrend(trend: data.dailyTrend),
           ],
-          const SizedBox(height: 16),
+          const SizedBox(height: 80),
         ],
       ),
     );
@@ -308,6 +321,8 @@ class _MonthlyChart extends StatelessWidget {
                         );
                       }).toList(),
                     ),
+                    swapAnimationDuration: const Duration(milliseconds: 600),
+                    swapAnimationCurve: Curves.easeOutQuart,
                   ),
           ),
         ),
@@ -528,6 +543,8 @@ class _DailyTrend extends StatelessWidget {
                         ),
                       ],
                     ),
+                    duration: const Duration(milliseconds: 600),
+                    curve: Curves.easeOutQuart,
                   ),
           ),
         ),
