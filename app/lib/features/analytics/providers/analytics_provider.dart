@@ -13,20 +13,21 @@ final analyticsRepositoryProvider =
 class AnalyticsNotifier extends AsyncNotifier<AnalyticsData> {
   @override
   Future<AnalyticsData> build() async {
-    ref.watch(selectedPeriodProvider);
+    final period = ref.watch(selectedPeriodProvider);
     final now = DateTime.now();
     return ref
         .read(analyticsRepositoryProvider)
-        .getMonthlyAnalytics(now.month, now.year);
+        .getMonthlyAnalytics(now.month, now.year, period.name);
   }
 
   Future<void> refresh() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() {
+      final period = ref.read(selectedPeriodProvider);
       final now = DateTime.now();
       return ref
           .read(analyticsRepositoryProvider)
-          .getMonthlyAnalytics(now.month, now.year);
+          .getMonthlyAnalytics(now.month, now.year, period.name);
     });
   }
 }

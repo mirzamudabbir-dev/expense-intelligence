@@ -134,7 +134,10 @@ class HomeScreen extends ConsumerWidget {
               ),
             ),
           ],
-        ),
+        )
+            .animate()
+            .fadeIn(duration: 600.ms)
+            .slideY(begin: 0.05, duration: 600.ms, curve: Curves.easeOutQuart),
       ),
       floatingActionButton: _Fab(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -186,15 +189,6 @@ class _Header extends StatelessWidget {
           style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
         ),
         const Spacer(),
-        Semantics(
-          label: 'Notifications',
-          button: true,
-          child: const Icon(
-            Icons.notifications_outlined,
-            size: 24,
-            color: AppColors.textSecondary,
-          ),
-        ),
       ],
     );
   }
@@ -376,7 +370,7 @@ class _CategoryRow extends StatelessWidget {
               ),
             ),
           );
-        }).toList(),
+        }).toList().animate(interval: 50.ms).fadeIn(duration: 400.ms).slideX(begin: 0.1, curve: Curves.easeOutQuart),
       ),
     );
   }

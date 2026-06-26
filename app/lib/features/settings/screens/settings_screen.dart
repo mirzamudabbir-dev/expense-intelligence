@@ -78,13 +78,6 @@ class SettingsScreen extends ConsumerWidget {
                     ),
                     onTap: () => context.push('/budget'),
                   ),
-                  const Divider(
-                      height: 1, thickness: 1, color: AppColors.border, indent: 48),
-                  const _SettingsRow(
-                    icon: Icons.currency_rupee,
-                    title: 'Currency',
-                    trailing: Text('₹ INR'),
-                  ),
                 ],
               ),
             ),

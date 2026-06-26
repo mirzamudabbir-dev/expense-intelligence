@@ -1,0 +1,5 @@
+{
+  "SUPABASE_URL": "https://owwqzaxdflwmbqjknqec.supabase.co",
+  "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93d3F6YXhkZmx3bWJxamtucWVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMjE2MjIsImV4cCI6MjA5NDU5NzYyMn0.Vlg4c4WQM-HRa4ey_z2m0zcdrp3-FMT2wvt80nuu8QY",
+  "API_BASE_URL": "https://spent-backend.onrender.com"
+}

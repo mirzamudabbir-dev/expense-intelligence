@@ -8,17 +8,16 @@ class AnalyticsRepository {
 
   static const _base = String.fromEnvironment('API_BASE_URL');
 
-  Future<AnalyticsData> getMonthlyAnalytics(int month, int year) async {
+  Future<AnalyticsData> getMonthlyAnalytics(int month, int year, String period) async {
     final token = supabase.auth.currentSession?.accessToken;
     if (token == null) throw Exception('Not authenticated');
 
     final uri = Uri.parse('$_base/analytics/monthly')
-        .replace(queryParameters: {'month': '$month', 'year': '$year'});
+        .replace(queryParameters: {'month': '$month', 'year': '$year', 'period': period});
 
-    final res = await http.get(
-      uri,
-      headers: {'Authorization': 'Bearer $token'},
-    );
+    final res = await http
+        .get(uri, headers: {'Authorization': 'Bearer $token'})
+        .timeout(const Duration(seconds: 15));
 
     if (res.statusCode != 200) {
       throw Exception('Analytics request failed: ${res.statusCode}');

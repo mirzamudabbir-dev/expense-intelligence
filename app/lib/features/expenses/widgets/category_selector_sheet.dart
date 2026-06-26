@@ -4,9 +4,9 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 
 class CategorySelectorSheet extends StatelessWidget {
-  const CategorySelectorSheet({super.key, required this.initialCategory});
+  const CategorySelectorSheet({super.key, this.initialCategory});
 
-  final String initialCategory;
+  final String? initialCategory;
 
   static const _icons = <String, IconData>{
     'food': Icons.restaurant,

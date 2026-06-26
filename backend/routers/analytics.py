@@ -11,6 +11,7 @@ router = APIRouter()
 async def monthly_analytics(
     month: int,
     year: int,
+    period: str = "month",
     user_id: str = Depends(get_current_user),
 ):
     total_res = supabase.rpc("get_monthly_total", {
@@ -21,9 +22,10 @@ async def monthly_analytics(
         "p_user_id": user_id, "p_month": month, "p_year": year,
     }).execute()
 
-    daily_res = supabase.rpc("get_daily_trend", {
-        "p_user_id": user_id,
-    }).execute()
+    if period == "year":
+        trend_res = supabase.rpc("get_yearly_trend", {"p_user_id": user_id}).execute()
+    else:
+        trend_res = supabase.rpc("get_daily_trend", {"p_user_id": user_id}).execute()
 
     monthly_compare_res = supabase.rpc("get_monthly_comparison", {
         "p_user_id": user_id,
@@ -32,7 +34,7 @@ async def monthly_analytics(
     return MonthlyAnalyticsResponse(
         total=total_res.data or 0,
         category_breakdown=breakdown_res.data or [],
-        daily_trend=daily_res.data or [],
+        daily_trend=trend_res.data or [],
         monthly_comparison=monthly_compare_res.data or [],
     )
 

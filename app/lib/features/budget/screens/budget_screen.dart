@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
@@ -50,7 +51,10 @@ class BudgetScreen extends ConsumerWidget {
               SizedBox(height: MediaQuery.of(context).padding.bottom + 32),
             ],
           ),
-        ),
+        )
+            .animate()
+            .fadeIn(duration: 600.ms)
+            .slideY(begin: 0.05, duration: 600.ms, curve: Curves.easeOutQuart),
       ),
     );
   }

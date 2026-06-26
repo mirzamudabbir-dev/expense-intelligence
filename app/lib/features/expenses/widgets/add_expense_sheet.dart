@@ -13,6 +13,7 @@ import '../../../services/supabase_service.dart';
 import '../models/expense.dart';
 import '../providers/expenses_provider.dart';
 import 'category_selector_sheet.dart';
+import '../../../shared/widgets/money_spill_overlay.dart';
 
 class AddExpenseSheet extends ConsumerStatefulWidget {
   const AddExpenseSheet({super.key, this.initialExpense});
@@ -28,7 +29,7 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
   final _amountFocus = FocusNode();
   final _noteController = TextEditingController();
 
-  String _category = 'others';
+  String? _category;
   DateTime _date = DateTime.now();
   String _paymentMethod = 'cash';
   bool _isSaving = false;
@@ -80,6 +81,8 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
     final v = double.tryParse(_amountController.text.trim()) ?? 0;
     return v > 0;
   }
+
+  bool get _isFormValid => _isAmountValid && _category != null;
 
   String get _dateLabel {
     final now = DateTime.now();
@@ -156,7 +159,7 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
       if (widget.initialExpense != null) {
         final updated = widget.initialExpense!.copyWith(
           amount: amount,
-          category: _category,
+          category: _category!,
           note: trimmedNote,
           date: _date,
           paymentMethod: _paymentMethod,
@@ -167,7 +170,7 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
           id: '',
           userId: supabase.auth.currentUser!.id,
           amount: amount,
-          category: _category,
+          category: _category!,
           note: trimmedNote,
           date: _date,
           paymentMethod: _paymentMethod,
@@ -175,7 +178,13 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
         );
         await ref.read(expensesNotifierProvider.notifier).addExpense(expense);
       }
-      if (mounted) Navigator.pop(context);
+      if (mounted) {
+        final rootContext = context;
+        Navigator.pop(context);
+        if (amount >= 500) {
+          showMoneySpill(rootContext);
+        }
+      }
       HapticFeedback.mediumImpact();
     } catch (_) {
       if (mounted) setState(() => _isSaving = false);
@@ -272,9 +281,16 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
   }
 
   Widget _buildFieldGroup() {
-    final catColor =
-        AppColors.categoryColors[_category] ?? AppColors.textSecondary;
-    final catIcon = _categoryIcons[_category] ?? Icons.grid_view;
+    final hasCategory = _category != null;
+    final catColor = hasCategory
+        ? (AppColors.categoryColors[_category!] ?? AppColors.textSecondary)
+        : AppColors.textTertiary;
+    final catIcon = hasCategory
+        ? (_categoryIcons[_category!] ?? Icons.grid_view)
+        : Icons.category_outlined;
+    final catLabel = hasCategory
+        ? _category![0].toUpperCase() + _category!.substring(1)
+        : 'Select Category';
 
     return Container(
       decoration: BoxDecoration(
@@ -291,8 +307,10 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
                 Icon(catIcon, color: catColor, size: 20),
                 const SizedBox(width: 8),
                 Text(
-                  _category[0].toUpperCase() + _category.substring(1),
-                  style: AppTextStyles.body,
+                  catLabel,
+                  style: AppTextStyles.body.copyWith(
+                    color: hasCategory ? AppColors.textPrimary : AppColors.textSecondary,
+                  ),
                 ),
               ],
             ),
@@ -404,12 +422,12 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
                 _buildFieldGroup(),
                 const SizedBox(height: 20),
                 Opacity(
-                  opacity: _isAmountValid ? 1.0 : 0.4,
+                  opacity: _isFormValid ? 1.0 : 0.4,
                   child: SizedBox(
                     width: double.infinity,
                     height: 52,
                     child: ElevatedButton(
-                      onPressed: _isAmountValid && !_isSaving ? _save : null,
+                      onPressed: _isFormValid && !_isSaving ? _save : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.accent,
                         disabledBackgroundColor: AppColors.accent,

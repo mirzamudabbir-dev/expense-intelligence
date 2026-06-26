@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_text_styles.dart';
+
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -34,13 +34,20 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: AppColors.bgPrimary,
       body: Center(
-        child: Text(
-          'spent',
-          style: AppTextStyles.display.copyWith(
-            fontSize: 36,
-            fontWeight: FontWeight.w700,
-          ),
-        ).animate().fade(duration: 400.ms, curve: Curves.easeOut),
+        child: Image.asset(
+          'assets/images/app_icon.png',
+          width: 120,
+          height: 120,
+        )
+            .animate()
+            .scale(
+              begin: const Offset(0.5, 0.5),
+              end: const Offset(1, 1),
+              duration: 800.ms,
+              curve: Curves.easeOutBack,
+            )
+            .fadeIn(duration: 800.ms)
+            .shimmer(delay: 400.ms, duration: 1000.ms),
       ),
     );
   }
